@@ -23,8 +23,8 @@ export function generaMenu(routes, data) {
     const menu = {
       path: item.url === '#' ? item.menu_id + '_key' : item.url,
       // component: item.url === '#' ? Layout : () => import(`@/views${item.url}/index`),
-      component: item.url === '#' ? Layout : () => resolve => {
-        require(['@/views' + item.url + '/index'], resolve)
+      component: item.url === '#' ? Layout : resolve => {
+        require(['@/views' + item.url], resolve)
       },
       // hidden: true,
       children: [],

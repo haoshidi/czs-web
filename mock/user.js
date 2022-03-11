@@ -1,3 +1,4 @@
+const Mock = require('mockjs')
 
 const tokens = {
   admin: {
@@ -22,11 +23,21 @@ const users = {
     name: 'Normal Editor'
   }
 }
-
+const data = Mock.mock({
+  'items|30': [{
+    'userId|+1': 1,
+    userName: '@name',
+    'status|1': ['published', 'draft', 'deleted'],
+    userPhone: /^1(5|3|7|8)[0-9]{9}$/,
+    userAddress: '@county(true)',
+    display_time: '@datetime',
+    pageviews: '@integer(300, 5000)'
+  }]
+})
 module.exports = [
   // user login
   {
-    url: '/vue-admin-template/user/login',
+    url: '/czs-web/user/login',
     type: 'post',
     response: config => {
       const { username } = config.body
@@ -49,7 +60,7 @@ module.exports = [
 
   // get user info
   {
-    url: '/vue-admin-template/user/info\.*',
+    url: '/czs-web/user/info\.*',
     type: 'get',
     response: config => {
       const { token } = config.query
@@ -72,7 +83,7 @@ module.exports = [
 
   // user logout
   {
-    url: '/vue-admin-template/user/logout',
+    url: '/czs-web/user/logout',
     type: 'post',
     response: _ => {
       return {
@@ -96,6 +107,13 @@ module.exports = [
           },
           menuList: [
             {
+              parent_id: 0,
+              menu_name: '基本信息管理',
+              icon: 'system',
+              perms: null,
+              order_num: 2,
+              menu_id: 10,
+              url: '#',
               create_time: '2018-03-16 11:33:00',
               menu_type: 'M',
               children: [
@@ -103,48 +121,74 @@ module.exports = [
                   create_time: '2018-03-16 11:33:00',
                   menu_type: 'C',
                   children: [],
-                  parent_id: 1,
+                  parent_id: 10,
                   menu_name: '用户管理',
-                  icon: 'user',
+                  icon: 'system-user',
                   perms: 'system:user:index',
                   order_num: 1,
-                  menu_id: 4,
-                  url: '/system/user'
-                },
-                {
+                  menu_id: 11,
+                  url: '/system/user/listUser'
+                }, {
                   create_time: '2018-12-28 10:36:20',
                   menu_type: 'M',
-                  children: [
-                    {
-                      create_time: '2018-12-28 10:50:28',
-                      menu_type: 'C',
-                      parent_id: 73,
-                      menu_name: '人员通信录',
-                      icon: null,
-                      perms: 'system:person:index',
-                      order_num: 1,
-                      menu_id: 74,
-                      url: '/system/book/person'
-                    }
-                  ],
-                  parent_id: 1,
-                  menu_name: '通信录管理',
-                  icon: 'fa fa-address-book-o',
+                  parent_id: 10,
+                  menu_name: '角色管理',
+                  icon: 'system-role',
                   perms: null,
-                  order_num: 1,
-                  menu_id: 73,
+                  order_num: 2,
+                  menu_id: 12,
                   url: '#'
+                }, {
+                  create_time: '2018-12-28 10:36:20',
+                  menu_type: 'M',
+                  parent_id: 10,
+                  menu_name: '权限管理',
+                  icon: 'system-permission',
+                  perms: null,
+                  order_num: 3,
+                  menu_id: 13,
+                  url: '#'
+                }, {
+                  menu_id: 14,
+                  create_time: '2018-12-28 10:36:20',
+                  menu_type: 'M',
+                  parent_id: 10,
+                  menu_name: '菜单管理',
+                  icon: 'system-menu',
+                  perms: null,
+                  order_num: 4,
+                  url: '#',
+                  children: [{
+                    menu_id: 140,
+                    create_time: '2018-12-28 10:36:20',
+                    menu_type: 'M',
+                    parent_id: 14,
+                    menu_name: '菜单基础信息',
+                    icon: 'fa fa-address-book-o',
+                    perms: null,
+                    order_num: 5,
+                    url: '#'
+                  }, {
+                    menu_id: 141,
+                    create_time: '2018-12-28 10:36:20',
+                    menu_type: 'M',
+                    parent_id: 14,
+                    menu_name: '菜单角色配置',
+                    icon: 'fa fa-address-book-o',
+                    perms: null,
+                    order_num: 5,
+                    url: '#'
+                  }]
                 }
-              ],
+              ]
+            }, {
               parent_id: 0,
-              menu_name: '系统管理',
-              icon: 'fa fa-adjust',
+              menu_name: '系统监控统计',
+              icon: 'statis',
               perms: null,
-              order_num: 2,
-              menu_id: 1,
-              url: '#'
-            },
-            {
+              order_num: 5,
+              menu_id: 20,
+              url: '#',
               create_time: '2018-03-16 11:33:00',
               menu_type: 'M',
               children: [
@@ -159,19 +203,26 @@ module.exports = [
                   menu_id: 15,
                   url: '/system/druid/monitor'
                 }
-              ],
-              parent_id: 0,
-              menu_name: '系统监控',
-              icon: 'fa fa-video-camera',
-              perms: null,
-              order_num: 5,
-              menu_id: 2,
-              url: '#'
+              ]
             }
           ]
         }
       }
     }
 
+  },
+  {
+    url: '/czs-web/user/listUser',
+    type: 'get',
+    response: config => {
+      const items = data.items
+      return {
+        code: 20000,
+        data: {
+          total: items.length,
+          items: items
+        }
+      }
+    }
   }
 ]
