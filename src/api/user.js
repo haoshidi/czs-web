@@ -36,3 +36,10 @@ export function getList(params) {
     params
   })
 }
+export function fetchList(query) {
+  return request({
+    url: '/czs-web/user/fetchList',
+    method: 'get',
+    params: query
+  })
+}
