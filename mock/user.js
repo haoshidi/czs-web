@@ -9,7 +9,7 @@ for (let i = 0; i < count; i++) {
     timestamp: +Mock.Random.date('T'),
     author: '@first',
     reviewer: '@first',
-    userName: '@title(5, 10)',
+    userName: '@first',
     userPhone: /^1(5|3|7|8)[0-9]{9}$/,
     userAddress: '@county(true)',
     content_short: 'mock data',

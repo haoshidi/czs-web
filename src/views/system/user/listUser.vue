@@ -1,13 +1,17 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.userName" placeholder="用户名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        Search
+      <el-input v-model="listQuery.userName" placeholder="用户注册名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search"  @click="handleFilter">
+        查询
       </el-button>
+
       <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
-        Export
+        导出Excel
       </el-button>
+      <el-checkbox v-model="showReviewer" class="filter-item" style="margin-left:15px;" @change="tableKey=tableKey+1">
+        reviewer
+      </el-checkbox>
     </div>
 
     <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%">
@@ -16,29 +20,29 @@
           {{ scope.row.userId }}
         </template>
       </el-table-column>
-      <el-table-column label="用户名称" min-width="150px">
+      <el-table-column label="注册名称" min-width="150px">
         <template slot-scope="scope">
           {{ scope.row.userName }}
         </template>
       </el-table-column>
-      <el-table-column label="手机" width="200" align="center">
+      <el-table-column label="手机" width="120" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.userPhone }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="地址" align="center">
+      <el-table-column label="注册地址" align="center" min-width="200px">
         <template slot-scope="scope">
           <span>{{ scope.row.userAddress }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Pageviews" width="110" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.pageviews }}
         </template>
       </el-table-column>
       <el-table-column class-name="status-col" label="登录状态" width="110" align="center">
         <template slot-scope="scope">
           <el-tag :type="scope.row.status | statusFilter">{{ scope.row.status }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column v-if="showReviewer" label="Reviewer" width="110px" align="center">
+        <template slot-scope="{row}">
+          <span style="color:red;">{{ row.reviewer }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" prop="created_at" label="显示时间" width="200">
@@ -55,7 +59,7 @@
       <el-table-column label="功能" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
-            Edit
+            编辑
           </el-button>
           <el-button v-if="row.status!='published'" size="mini" type="success" @click="handleModifyStatus(row,'published')">
             Publish
@@ -64,7 +68,7 @@
             Draft
           </el-button>
           <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">
-            Delete
+            删除
           </el-button>
         </template>
       </el-table-column>
@@ -95,6 +99,7 @@ export default {
   },
   data() {
     return {
+      tableKey: 0,
       list: null,
       listLoading: true,
       total: 0,
@@ -103,7 +108,8 @@ export default {
         limit: 20,
         userName: undefined
       },
-      downloadLoading: false // excel 下载
+      downloadLoading: false, // excel 下载
+      showReviewer: false
     }
   },
   created() {
@@ -124,6 +130,13 @@ export default {
     handleFilter() {
       this.listQuery.page = 1
       this.getList()
+    },
+    handleModifyStatus(row, status) {
+      this.$message({
+        message: '操作Success',
+        type: 'success'
+      })
+      row.status = status
     },
     handleDownload() {
       this.downloadLoading = true
